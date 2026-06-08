@@ -71,7 +71,7 @@ func TestSubscribe(t *testing.T) {
 	var results []TaskResult
 	var mu sync.Mutex
 
-	p.Subscribe(func(result TaskResult) {
+	p.Subscribe(func(ctx context.Context, result TaskResult) {
 		mu.Lock()
 		defer mu.Unlock()
 		results = append(results, result)
@@ -215,7 +215,7 @@ func TestTaskPanic(t *testing.T) {
 	var results []TaskResult
 	var mu sync.Mutex
 
-	p.Subscribe(func(result TaskResult) {
+	p.Subscribe(func(ctx context.Context, result TaskResult) {
 		mu.Lock()
 		defer mu.Unlock()
 		results = append(results, result)
@@ -324,7 +324,7 @@ func BenchmarkTaskExecution(b *testing.B) {
 	done := make(chan struct{})
 	var count atomic.Int64
 
-	p.Subscribe(func(result TaskResult) {
+	p.Subscribe(func(ctx context.Context, result TaskResult) {
 		if count.Add(1) == int64(b.N) {
 			close(done)
 		}

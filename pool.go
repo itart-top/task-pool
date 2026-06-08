@@ -12,7 +12,7 @@ import (
 
 // TaskFunc 定义带返回值的任务函数
 type TaskFunc func(ctx context.Context) (any, error)
-type ResultSubscriber func(result TaskResult)
+type ResultSubscriber func(ctx context.Context, result TaskResult)
 
 type Entry struct {
 	Ctx    context.Context
@@ -219,7 +219,7 @@ func (p *Pool) invoke(task Entry) {
 		// 取 subscriber 并回调（并发安全）
 		if v := p.subscriber.Load(); v != nil {
 			if sub, ok := v.(ResultSubscriber); ok && sub != nil {
-				sub(TaskResult{
+				sub(task.Ctx, TaskResult{
 					TaskID:   task.TaskID,
 					Data:     data,
 					Err:      err,

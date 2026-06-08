@@ -59,7 +59,7 @@ p := pool.New(10, 100)
 defer p.Close()
 
 // 订阅任务执行结果
-p.Subscribe(func(result pool.TaskResult) {
+p.Subscribe(func(ctx context.Context, result pool.TaskResult) {
     if result.Err != nil {
         fmt.Printf("任务 %s 执行失败: %v\n", result.TaskID, result.Err)
     } else {
@@ -111,7 +111,7 @@ func main() {
     results := make(map[string]pool.TaskResult)
     
     // 订阅结果
-    p.Subscribe(func(result pool.TaskResult) {
+    p.Subscribe(func(ctx context.Context, result pool.TaskResult) {
         mu.Lock()
         defer mu.Unlock()
         results[result.TaskID] = result
